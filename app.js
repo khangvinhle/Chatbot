@@ -4,7 +4,7 @@ var request = require('request');
 
 // Setup Restify Server
 var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function() {
+server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log('%s listening to %s', server.name, server.url);
 });
 
@@ -33,7 +33,7 @@ function getIntentFromLuis(text, callback) {
             'q': text
         },
         json: true
-    }, function(error, response, data) {
+    }, function (error, response, data) {
         if (error) {
             callback(error);
         } else {
@@ -43,15 +43,30 @@ function getIntentFromLuis(text, callback) {
 }
 
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
-var bot = new builder.UniversalBot(connector, function(session) {
-    getIntentFromLuis(session.message.text, function(error, luisData) {
+var bot = new builder.UniversalBot(connector, function (session) {
+    getIntentFromLuis(session.message.text, function (error, luisData) {
         var intent = luisData.topScoringIntent.intent;
         var score = luisData.topScoringIntent.score;
+        var entities = luisData.entities;
+
         if (score > 0.6 && intent != 'None') {
             if (intent == 'product lookup') {
-                session.send("Sure, I will show you all the products!");
+                if (entities.length > 0) {
+                    var products = [];
+                    for (var productIterator in entities) {
+                        products.push(entities[productIterator].entity);
+                    }
+                    var message = "Sure I will show you" + products.join(',');
+                    session.send(message);
+                } else {
+                    session.send("Sure I will show you all the products!");
+                }
             } else if (intent == 'location lookup') {
-                session.send("Sorry, we are selling online only.");
+                if (entities.length > 0) {
+                    session.send("We are selling online only.")
+                }else{
+                    session.send("We are selling online only.")
+                }
             }
         } else {
             session.send("I did not understand you. I am still learning! Can you rephrase?");
