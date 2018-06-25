@@ -67,6 +67,8 @@ var bot = new builder.UniversalBot(connector, function (session) {
                 }else{
                     session.send("We are selling online only.")
                 }
+            }else if(intent=='greetings'){
+                session.send("Hi! I can help you find fragrances. What would you like me to do?");
             }
         } else {
             session.send("I did not understand you. I am still learning! Can you rephrase?");
