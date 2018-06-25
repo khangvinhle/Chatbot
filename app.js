@@ -45,32 +45,43 @@ function getIntentFromLuis(text, callback) {
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
 var bot = new builder.UniversalBot(connector, function (session) {
     getIntentFromLuis(session.message.text, function (error, luisData) {
+        // Intent detected by LUIS
         var intent = luisData.topScoringIntent.intent;
+        // Confidence score of the Intent detected
         var score = luisData.topScoringIntent.score;
+        // Entities extracted by LUIS
         var entities = luisData.entities;
-
+        // We are setting a threshold of 0.6 for the confidence score. If the confidence score is less than 0.6 we are considering that the Chatbot has failed to understand the user message
         if (score > 0.6 && intent != 'None') {
+            // Check if the user is looking for any product
             if (intent == 'product lookup') {
+                // check if any entities are found
                 if (entities.length > 0) {
                     var products = [];
                     for (var productIterator in entities) {
                         products.push(entities[productIterator].entity);
                     }
-                    var message = "Sure I will show you" + products.join(',');
+                    var message = "Sure I will show you " + products.join(',');
                     session.send(message);
                 } else {
                     session.send("Sure I will show you all the products!");
                 }
-            } else if (intent == 'location lookup') {
+            }
+            // Check if the user is looking for location to a store 
+            else if (intent == 'location lookup') {
+                // considering only first location
                 if (entities.length > 0) {
                     session.send("We are selling online only.")
-                }else{
+                } else {
                     session.send("We are selling online only.")
                 }
-            }else if(intent=='greetings'){
+            }
+            // Check if user has greeted the Chatbot
+            else if (intent == 'greetings') {
                 session.send("Hi! I can help you find fragrances. What would you like me to do?");
             }
-        } else {
+        }
+        else {
             session.send("I did not understand you. I am still learning! Can you rephrase?");
         }
     });
