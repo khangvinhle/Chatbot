@@ -18,8 +18,8 @@ var APPLICATION_PASSWORD = 'ffwKKW3503-nqagTQWC7-*[';
 
 // Create chat bot and listen for messages
 var connector = new builder.ChatConnector({
-    appId: APPLICATION_ID,
-    appPassword: APPLICATION_PASSWORD
+    appId: process.env.APPLICATION_ID,
+    appPassword: process.env.APPLICATION_PASSWORD
 });
 server.post('/api/messages', connector.listen());
 

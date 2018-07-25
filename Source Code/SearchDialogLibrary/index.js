@@ -129,7 +129,7 @@ function create(settings) {
                 } else {
                     // Add selection
                     var selection = session.dialogData.selection || [];
-                    if (!_.find(selection, ['key', hit.key])) {
+                    if (!_.find(selection, ['key', hit.pName])) {
                         selection.push(hit);
                         session.dialogData.selection = selection;
                         session.save();
@@ -138,7 +138,7 @@ function create(settings) {
                     var query = session.dialogData.query;
                     if (settings.multipleSelection) {
                         // Multi-select -> Continue?
-                        session.send('%s was added to your list!', hit.title);
+                        session.send('%s was added to your list!', hit.pName);
                         session.beginDialog('confirm-continue', { selection: selection, query: query });
                     } else {
                         // Single-select -> done!
@@ -277,7 +277,7 @@ function create(settings) {
 
     function searchHitAsCard(showSave, searchHit) {
         var buttons = showSave
-            ? [new builder.CardAction().type('imBack').title('Save').value(searchHit.key)]
+            ? [new builder.CardAction().type('imBack').title('Save').value(searchHit.pName)]
             : [];
 
         var card = new builder.HeroCard()
@@ -329,7 +329,7 @@ function create(settings) {
         if (selection.length === 0) {
             session.send('You have not added anything yet.');
         } else {
-            var actions = selection.map((hit) => builder.CardAction.imBack(session, hit.title));
+            var actions = selection.map((hit) => builder.CardAction.imBack(session, hit.pName));
             var message = new builder.Message(session)
                 .text('Here\'s what you\'ve added to your list so far:')
                 .attachments(selection.map(searchHitAsCard.bind(null, false)))
