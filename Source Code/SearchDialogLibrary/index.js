@@ -62,7 +62,6 @@ function create(settings) {
 
             var input = args.response;
             var hasInput = typeof input === 'string';
-
             if (hasInput) {
                 // Process input
                 if (settings.multipleSelection && input.trim().toLowerCase() === 'list') {
@@ -76,12 +75,7 @@ function create(settings) {
                 }
             } else {
                 // G. Prompt
-                if (session.userData.searchData != '') {
-                    var newQuery = Object.assign({}, query, { searchText: session.userData.searchData });
-                    performSearch(session, newQuery, selection);
-                    session.userData.searchData = '';
-                }
-
+                searchPrompt(session);
             }
         }));
 
