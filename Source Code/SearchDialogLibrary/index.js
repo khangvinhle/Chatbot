@@ -78,8 +78,8 @@ function create(settings) {
                 // G. Prompt
                 if (session.userData.searchData != '') {
                     var newQuery = Object.assign({}, query, { searchText: session.userData.searchData });
-                    performSearch(session, newQuery, selection);
                     session.userData.searchData = '';
+                    performSearch(session, newQuery, selection);
                 } else {
                     searchPrompt();
                 }
