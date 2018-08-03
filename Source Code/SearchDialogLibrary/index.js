@@ -80,6 +80,8 @@ function create(settings) {
                     var newQuery = Object.assign({}, query, { searchText: session.userData.searchData });
                     performSearch(session, newQuery, selection);
                     session.userData.searchData = '';
+                } else {
+                    searchPrompt();
                 }
 
             }

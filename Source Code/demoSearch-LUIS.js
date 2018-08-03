@@ -107,36 +107,19 @@ var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 
 
 // Receive messages from the user and respond 
-var bot = new builder.UniversalBot(connector).set('storage', inMemoryStorage);
-
-// Send proactive messages
-function sendProactiveMessage() {
-    var msg = new builder.Message();
-    msg.text("Hi, I'm fragrance bot!, I can help you search for our prodcuts");
-    msg.textLocale('en-US');
-    bot.send(msg);  
-}
-
-server.get('/api/messages', (req, res, next) => {
-    sendProactiveMessage();
-});
-
-bot.dialog('/', function(session, args) {
-    session.send("Hello!")
-    setTimeout(() => {
-        sendProactiveMessage();
-    }, 1000);
-})
+var bot = new builder.UniversalBot(connector, function (session) {
+    session.send("Sorry, i don't really understand what you are saying");
+    session.send("Please type....: ")
+}).set('storage', inMemoryStorage);
+//
 
 bot.recognizer(recognizer);
 
 
 bot.dialog('GreetingDialog',
     (session) => {
-        builder.Prompts.text(session,'Hi, how can I help you ?');
-    }, 
-    function(session, results) {
-        
+        session.send("Hi, I'm a fragrance bot, I can help you find the right product!");
+        // search dialog
     }
 ).triggerAction({
     matches: 'greetings'
@@ -144,7 +127,7 @@ bot.dialog('GreetingDialog',
 
 bot.dialog('ProductLookUpDialog', [
     function(session, args, next) {
-        session.send('Hi, I will start searching for you');
+        session.send('Hi, Wait for searching...');
         var intent = args.intent;
 
         session.userData.searchData = '';
@@ -220,13 +203,13 @@ bot.dialog('fragranceSuggestion', [
             listFragrance.push(session.dialogData.occasion);
             listFragrance.push(session.dialogData.season);
            
-            var result = listFragrance.shift().filter(function(v) {
+            var suggestionList = listFragrance.shift().filter(function(v) {
                 return listFragrance.every(function(a) {
                     return a.indexOf(v) !== -1;
                 });
             });
 
-            console.log(result);
+            console.log(suggestionList);
         }
     }
 ]);
