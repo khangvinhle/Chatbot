@@ -62,7 +62,6 @@ function create(settings) {
 
             var input = args.response;
             var hasInput = typeof input === 'string';
-
             if (hasInput) {
                 // Process input
                 if (settings.multipleSelection && input.trim().toLowerCase() === 'list') {
@@ -74,16 +73,14 @@ function create(settings) {
                     var newQuery = Object.assign({}, query, { searchText: input });
                     performSearch(session, newQuery, selection);
                 }
+            } else if (session.userData.searchData !== '') {
+                var newQuery = Object.assign({}, query, { searchText: session.userData.searchData });
+                session.userData.searchData = '';
+                session.dialogData.firstTimeDone = true;
+                performSearch(session, newQuery, selection);
             } else {
                 // G. Prompt
-                if (session.userData.searchData != '') {
-                    var newQuery = Object.assign({}, query, { searchText: session.userData.searchData });
-                    session.userData.searchData = '';
-                    performSearch(session, newQuery, selection);
-                } else {
-                    searchPrompt();
-                }
-
+                searchPrompt(session);
             }
         }));
 
@@ -137,7 +134,7 @@ function create(settings) {
                 } else {
                     // Add selection
                     var selection = session.dialogData.selection || [];
-                    if (!_.find(selection, ['key', hit.pName])) {
+                    if (!_.find(selection, ['key', hit.key])) {
                         selection.push(hit);
                         session.dialogData.selection = selection;
                         session.save();
@@ -146,7 +143,7 @@ function create(settings) {
                     var query = session.dialogData.query;
                     if (settings.multipleSelection) {
                         // Multi-select -> Continue?
-                        session.send('%s was added to your list!', hit.pName);
+                        session.send('%s was added to your list!', hit.title);
                         session.beginDialog('confirm-continue', { selection: selection, query: query });
                     } else {
                         // Single-select -> done!
@@ -285,23 +282,22 @@ function create(settings) {
 
     function searchHitAsCard(showSave, searchHit) {
         var buttons = showSave
-            ? [new builder.CardAction().type('imBack').title('Save').value(searchHit.pName)]
+            ? [new builder.CardAction().type('imBack').title('Save').value(searchHit.key)]
             : [];
 
         var card = new builder.HeroCard()
             .title(searchHit.pName)
             .text('smell type: %s\n\n retentiontime: %d hour(s)\n\n gender: %s\n\n season: %s\n\n occasion: %s\n\n 10 ml price: %d k\n\n full price: %d k\n\n capacity: %d ml',searchHit.smellType,searchHit.retentionTime,searchHit.gender,searchHit.season,searchHit.occasion,searchHit.ten_ml_price,searchHit.fullPrice,searchHit.capacity)
             .buttons(buttons);
-        
-        /*
-        if (searchHit.description) {
-            card.subtitle(searchHit.description);
-        }
 
-        if (searchHit.imageUrl) {
-            card.images([new builder.CardImage().url(searchHit.imageUrl)]);
-        }
-        */
+        // if (searchHit.description) {
+        //     card.subtitle(searchHit.description);
+        // }
+
+        // if (searchHit.imageUrl) {
+        //     card.images([new builder.CardImage().url(searchHit.imageUrl)]);
+        // }
+
         return card;
     }
 
@@ -337,7 +333,7 @@ function create(settings) {
         if (selection.length === 0) {
             session.send('You have not added anything yet.');
         } else {
-            var actions = selection.map((hit) => builder.CardAction.imBack(session, hit.pName));
+            var actions = selection.map((hit) => builder.CardAction.imBack(session, hit.title));
             var message = new builder.Message(session)
                 .text('Here\'s what you\'ve added to your list so far:')
                 .attachments(selection.map(searchHitAsCard.bind(null, false)))

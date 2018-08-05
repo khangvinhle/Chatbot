@@ -107,23 +107,31 @@ var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 
 
 // Receive messages from the user and respond 
-var bot = new builder.UniversalBot(connector, function (session) {
-    session.send("Sorry, i don't really understand what you are saying");
-    session.send("Please type....: ")
-}).set('storage', inMemoryStorage);
+var bot = new builder.UniversalBot(connector, [ 
+    function (session) {
+        session.send("Sorry, i don't really understand what you are saying");
+        session.send("Please give me some information so I can help you find some fragrances")
+        session.beginDialog('fragranceSuggestion');   
+    }
+]).set('storage', inMemoryStorage);
 //
 
 bot.recognizer(recognizer);
 
 
-bot.dialog('GreetingDialog',
-    (session) => {
-        session.send("Hi, I'm a fragrance bot, I can help you find the right product!");
-        // search dialog
-    }
-).triggerAction({
-    matches: 'greetings'
-})
+// bot.dialog('GreetingDialog', [
+//     (session) => {
+//         session.send("Hi, I'm a fragrance bot, I can help you find the right product!");
+//         SearchLibrary.begin(session);
+//     }, 
+//     function (session, args) {
+//         session.send(
+//             'Done! For future reference, you selected these properties: %s',
+//             args.selection.map(function (i) { return i.key; }).join(', '));
+//     }
+// ]).triggerAction({
+//     matches: 'greetings'
+// })
 
 bot.dialog('ProductLookUpDialog', [
     function(session, args, next) {
@@ -165,7 +173,11 @@ bot.dialog('ProductLookUpDialog', [
         } else {
             session.beginDialog('fragranceSuggestion');
         }
-        
+    },
+    function (session, args) {
+        session.send(
+            'Done! For future reference, you selected these properties: %s',
+            args.selection.map(function (i) { return i.key; }).join(', '));
     }
 ]).triggerAction({
     matches: 'product lookup'
@@ -209,7 +221,9 @@ bot.dialog('fragranceSuggestion', [
                 });
             });
 
-            console.log(suggestionList);
+            session.send("Here are some brands that you can use: "+suggestionList.toString());
+            session.send("Have a nice day!");
+            session.endConversation();
         }
     }
 ]);
