@@ -260,6 +260,6 @@ function realstateToSearchHit(realstate) {
         ten_ml_price:realstate.ten_ml_price,
         fullPrice:realstate.fullPrice,
         capacity:realstate.capacity,
-        //imageUrl: realstate.thumbnail
+        imageUrl: realstate.pUrl
     };
 }
