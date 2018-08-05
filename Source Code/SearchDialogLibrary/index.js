@@ -73,10 +73,12 @@ function create(settings) {
                     var newQuery = Object.assign({}, query, { searchText: input });
                     performSearch(session, newQuery, selection);
                 }
-            } else if (session.userData.searchData !== '') {
+            } else if (session.userData.searchData !== undefined && session.userData.searchData !== '') {
+                console.log(session.userData.searchData);
                 var newQuery = Object.assign({}, query, { searchText: session.userData.searchData });
                 session.userData.searchData = '';
                 session.dialogData.firstTimeDone = true;
+                console.log("I'm in the no input and not first time condition.")
                 performSearch(session, newQuery, selection);
             } else {
                 // G. Prompt
