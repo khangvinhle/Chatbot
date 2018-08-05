@@ -119,19 +119,20 @@ var bot = new builder.UniversalBot(connector, [
 bot.recognizer(recognizer);
 
 
-// bot.dialog('GreetingDialog', [
-//     (session) => {
-//         session.send("Hi, I'm a fragrance bot, I can help you find the right product!");
-//         SearchLibrary.begin(session);
-//     }, 
-//     function (session, args) {
-//         session.send(
-//             'Done! For future reference, you selected these properties: %s',
-//             args.selection.map(function (i) { return i.key; }).join(', '));
-//     }
-// ]).triggerAction({
-//     matches: 'greetings'
-// })
+bot.dialog('GreetingDialog', [
+    (session) => {
+        session.send("Hi, I'm a fragrance bot, I can help you find the right product!");
+        SearchLibrary.begin(session);
+    }, 
+    function (session, args) {
+        session.send(
+            'Done! For future reference, you selected these properties: %s',
+            args.selection.map(function (i) { return i.pName; }).join(', '));
+        session.endDialog();
+    }
+]).triggerAction({
+    matches: /^hello$|^hi$|^hey$|^chao$/i
+})
 
 bot.dialog('ProductLookUpDialog', [
     function(session, args, next) {
@@ -177,7 +178,8 @@ bot.dialog('ProductLookUpDialog', [
     function (session, args) {
         session.send(
             'Done! For future reference, you selected these properties: %s',
-            args.selection.map(function (i) { return i.key; }).join(', '));
+            args.selection.map(function (i) { return i.pName; }).join(', '));
+        session.endDialog();
     }
 ]).triggerAction({
     matches: 'product lookup'
