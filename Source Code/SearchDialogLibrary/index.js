@@ -294,9 +294,9 @@ function create(settings) {
         //     card.subtitle(searchHit.description);
         // }
 
-        // if (searchHit.imageUrl) {
-        //     card.images([new builder.CardImage().url(searchHit.imageUrl)]);
-        // }
+        if (searchHit.imageUrl) {
+            card.images([new builder.CardImage().url(searchHit.imageUrl)]);
+        }
 
         return card;
     }
