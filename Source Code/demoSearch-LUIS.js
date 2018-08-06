@@ -248,18 +248,18 @@ bot.library(SearchLibrary.create({
 }));
 
 // Maps the AzureSearch RealState Document into a SearchHit that the Search Library can use
-function realstateToSearchHit(realstate) {
+function fragranceToSearchHit(fragrance) {
     return {
-        key: realstate.id,
-        pName:realstate.pName,
-        smellType:realstate.smellType,
-        retentionTime:realstate.retentionTime,
-        gender:realstate.gender,
-        season:realstate.season,
-        occasion:realstate.occasion,
-        ten_ml_price:realstate.ten_ml_price,
-        fullPrice:realstate.fullPrice,
-        capacity:realstate.capacity,
-        imageUrl: realstate.pUrl
+        key: fragrance.id,
+        pName:fragrance.pName,
+        smellType:fragrance.smellType,
+        retentionTime:fragrance.retentionTime,
+        gender:fragrance.gender,
+        season:fragrance.season,
+        occasion:fragrance.occasion,
+        ten_ml_price:fragrance.ten_ml_price,
+        fullPrice:fragrance.fullPrice,
+        capacity:fragrance.capacity,
+        imageUrl: fragrance.pUrl
     };
 }
